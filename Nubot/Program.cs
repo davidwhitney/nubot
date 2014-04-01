@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Nubot
 {
@@ -15,12 +13,30 @@ namespace Nubot
         }
     }
 
-    public interface IRobotAdapter
+    public interface IRobotAdapter : IMessageChannel
     {
+        void Open(Action<IMessageChannel, string> onEvent);
+    }
+
+    public interface IMessageChannel
+    {
+        void Send(string response);
+        
     }
 
     public class ConsoleAdapter : IRobotAdapter
     {
+        private Action<IMessageChannel, string> _onEvent;
+
+        public void Open(Action<IMessageChannel, string> onEvent)
+        {
+            _onEvent = onEvent;
+        }
+
+        public void Send(string response)
+        {
+            Console.WriteLine(response);
+        }
     }
 
     public class Robot : IRobot
@@ -38,8 +54,18 @@ namespace Nubot
             return this;
         }
 
-        public void Listen(IRobotAdapter adapter)
+        public IRobot Listen(IRobotAdapter adapter)
         {
+            adapter.Open(OnEvent);
+            return this;
+        }
+
+        public void OnEvent(IMessageChannel adapter, string text)
+        {
+            foreach (var handler in Modules.Select(module => module.FindMatchingOperation(text)))
+            {
+                handler.Handle(adapter, text);
+            }
         }
     }
 
@@ -51,16 +77,47 @@ namespace Nubot
 
     public interface IRobotModule
     {
-        
+        Robotics FindMatchingOperation(string text);
+    }
+
+    public class Robotics
+    {
+        public static readonly Robotics NoOperation = new Robotics();
+        public Action<IMessageChannel, string> Handle { get; set; }
+
+        public Robotics(Action<IMessageChannel, string> handle = null)
+        {
+            Handle = handle ?? ((x, y) => { });
+        }
+
+        public static Robotics Operation(Action<IMessageChannel, string> action)
+        {
+            return new Robotics(action);
+        }
     }
 
     public abstract class RobotModule : IRobotModule
     {
-        public Dictionary<string, Action<MessageChannel>> Respond { get; set; }
+        public Dictionary<string, Robotics> Respond { get; set; }
         
         protected RobotModule()
         {
-            Respond = new Dictionary<string, Action<MessageChannel>>();
+            Respond = new Dictionary<string, Robotics>();
+        }
+
+        public Robotics FindMatchingOperation(string text)
+        {
+            foreach (var action in Respond)
+            {
+                var regex = new Regex(action.Key);
+
+                if (regex.IsMatch(text))
+                {
+                    return action.Value;
+                }
+            }
+
+            return Robotics.NoOperation;
         }
     }
 
@@ -68,16 +125,7 @@ namespace Nubot
     {
         public MapModule()
         {
-            Respond["some regex"] = msg => { };
-        }
-
-    }
-
-    public class MessageChannel
-    {
-        public void Send(string response)
-        {
-            
+            Respond["some regex"] = Robotics.Operation((channel, text) => { });
         }
     }
 

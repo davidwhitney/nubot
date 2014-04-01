@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>410f6ffe-2dff-4c90-a50c-531b43f7926d</ProjectGuid>
+    <ProjectGuid>{E16B881B-547B-4806-855E-CB6992814650}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Nubot</RootNamespace>
