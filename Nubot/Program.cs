@@ -11,8 +11,10 @@ namespace Nubot
                 .RegisterModule(
                     new GoogleImagesModule(),
                     new MapModule()
-                )
-                .Listen(new ConsoleAdapter());
+                );
+
+            var adapter = new ConsoleAdapter();
+            adapter.Listen(robot.Hear);
         }
     }
 }

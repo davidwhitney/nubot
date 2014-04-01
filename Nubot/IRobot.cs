@@ -6,6 +6,6 @@ namespace Nubot
     public interface IRobot
     {
         IRobot RegisterModule(params IRobotModule[] module);
-        IRobot Listen(IRobotAdapter adapter);
+        void Hear(IMessageChannel adapter, Envelope msg);
     }
 }

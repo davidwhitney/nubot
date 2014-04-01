@@ -4,6 +4,6 @@ namespace Nubot.Adapters
 {
     public interface IRobotAdapter : IMessageChannel
     {
-        void Open(Action<IMessageChannel, Envelope> onEvent);
+        void Listen(Action<IMessageChannel, Envelope> onEvent);
     }
 }

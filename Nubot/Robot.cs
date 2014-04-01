@@ -21,24 +21,23 @@ namespace Nubot
             return this;
         }
 
-        public IRobot Listen(IRobotAdapter adapter)
+        public void Hear(IMessageChannel adapter, Envelope msg)
         {
-            adapter.Open(CallbackOnNewMessage);
-            return this;
+            foreach (var response in Modules.Select(module => module.FindMatchingOperation(msg.Text)))
+            {
+                Respond(response, msg, adapter);
+            }
         }
 
-        public void CallbackOnNewMessage(IMessageChannel adapter, Envelope msg)
+        private static void Respond(Action<IMessageChannel, Envelope> respond, Envelope msg, IMessageChannel adapter)
         {
-            foreach (var handler in Modules.Select(module => module.FindMatchingOperation(msg.Text)))
+            try
             {
-                try
-                {
-                    handler(adapter, msg);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("handler failed " + ex);
-                }
+                respond(adapter, msg);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("handler failed " + ex);
             }
         }
     }

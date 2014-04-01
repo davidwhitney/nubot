@@ -6,7 +6,7 @@ namespace Nubot.Adapters
     {
         private Action<IMessageChannel, Envelope> _onEvent;
 
-        public void Open(Action<IMessageChannel, Envelope> onEvent)
+        public void Listen(Action<IMessageChannel, Envelope> onEvent)
         {
             _onEvent = onEvent;
 
