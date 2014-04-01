@@ -1,7 +1,10 @@
-﻿namespace Nubot.Scripts
+﻿using System;
+using Nubot.Adapters;
+
+namespace Nubot.Scripts
 {
     public interface IRobotModule
     {
-        Robotics FindMatchingOperation(string text);
+        Action<IMessageChannel, string> FindMatchingOperation(string text);
     }
 }

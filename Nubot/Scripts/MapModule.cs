@@ -4,7 +4,7 @@ namespace Nubot.Scripts
     {
         public MapModule()
         {
-            Respond["some regex"] = Robotics.Operation((channel, text) => { });
+            Respond["some regex"] = (channel, text) => { };
         }
     }
 }

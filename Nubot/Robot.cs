@@ -30,7 +30,7 @@ namespace Nubot
         {
             foreach (var handler in Modules.Select(module => module.FindMatchingOperation(text)))
             {
-                handler.Handle(adapter, text);
+                handler(adapter, text);
             }
         }
     }

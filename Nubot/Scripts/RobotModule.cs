@@ -1,18 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Nubot.Adapters;
 
 namespace Nubot.Scripts
 {
     public abstract class RobotModule : IRobotModule
     {
-        public Dictionary<string, Robotics> Respond { get; set; }
+        public Dictionary<string, Action<IMessageChannel, string>> Respond { get; set; }
         
         protected RobotModule()
         {
-            Respond = new Dictionary<string, Robotics>();
+            Respond = new Dictionary<string, Action<IMessageChannel, string>>();
         }
 
-        public Robotics FindMatchingOperation(string text)
+        public Action<IMessageChannel, string> FindMatchingOperation(string text)
         {
             foreach (var action in Respond)
             {
@@ -24,7 +26,7 @@ namespace Nubot.Scripts
                 }
             }
 
-            return Robotics.NoOperation;
+            return ((x, y) => { });
         }
     }
 }

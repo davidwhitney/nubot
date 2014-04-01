@@ -6,7 +6,7 @@ namespace Nubot.Scripts
     {
         public GoogleImagesModule()
         {
-            Respond["(image|img)( me)? (.*)"] = Robotics.Operation(ImageMe);
+            Respond["(image|img)( me)? (.*)"] = ImageMe;
         }
 
         public void ImageMe(IMessageChannel msg, string text)
