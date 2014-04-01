@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Adapters\ConsoleAdapter.cs" />
     <Compile Include="Adapters\IMessageChannel.cs" />
+    <Compile Include="Envelope.cs" />
     <Compile Include="Scripts\GoogleImagesModule.cs" />
     <Compile Include="IRobot.cs" />
     <Compile Include="Adapters\IRobotAdapter.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nubot.Adapters;
 using Nubot.Scripts;
@@ -22,15 +23,22 @@ namespace Nubot
 
         public IRobot Listen(IRobotAdapter adapter)
         {
-            adapter.Open(OnEvent);
+            adapter.Open(CallbackOnNewMessage);
             return this;
         }
 
-        public void OnEvent(IMessageChannel adapter, string text)
+        public void CallbackOnNewMessage(IMessageChannel adapter, Envelope msg)
         {
-            foreach (var handler in Modules.Select(module => module.FindMatchingOperation(text)))
+            foreach (var handler in Modules.Select(module => module.FindMatchingOperation(msg.Text)))
             {
-                handler(adapter, text);
+                try
+                {
+                    handler(adapter, msg);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("handler failed " + ex);
+                }
             }
         }
     }

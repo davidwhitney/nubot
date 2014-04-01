@@ -4,9 +4,9 @@ namespace Nubot.Adapters
 {
     public class ConsoleAdapter : IRobotAdapter
     {
-        private Action<IMessageChannel, string> _onEvent;
+        private Action<IMessageChannel, Envelope> _onEvent;
 
-        public void Open(Action<IMessageChannel, string> onEvent)
+        public void Open(Action<IMessageChannel, Envelope> onEvent)
         {
             _onEvent = onEvent;
 
@@ -14,9 +14,8 @@ namespace Nubot.Adapters
             while (msg != string.Empty)
             {
                 msg = Console.ReadLine().Trim();
-                _onEvent(this, msg);
+                _onEvent(this, new Envelope {Room = "Console", User = Environment.UserName, Text = msg});
             }
-
         }
 
         public void Send(string response)

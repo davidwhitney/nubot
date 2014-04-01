@@ -5,6 +5,6 @@ namespace Nubot.Scripts
 {
     public interface IRobotModule
     {
-        Action<IMessageChannel, string> FindMatchingOperation(string text);
+        Action<IMessageChannel, Envelope> FindMatchingOperation(string text);
     }
 }
