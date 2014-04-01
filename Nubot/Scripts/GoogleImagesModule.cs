@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using Nubot.Adapters;
 
@@ -8,33 +10,23 @@ namespace Nubot.Scripts
     {
         public GoogleImagesModule()
         {
-            Respond["(image|img)( me)? (.*)"] = ImageMe;
+            const string api = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&safe=active&";
+
+            Respond["(image|img)( me)? (.*)"] = (msg, text) => msg.Send(SearchGoogleForImage(msg, string.Format("{0}q={1}", api, text)));
+            Respond["animate( me)? (.*)"] = (msg, text) => msg.Send(SearchGoogleForImage(msg, string.Format("imgtype=animated&{0}q={1}", api, text)));
         }
 
-        public void ImageMe(IMessageChannel msg, string text)
+        public string SearchGoogleForImage(IMessageChannel msg, string imageUri)
         {
-            /*    
-                  cb = animated if typeof animated == 'function'
-                  cb = faces if typeof faces == 'function'
-                  q = v: '1.0', rsz: '8', q: query, safe: 'active'
-                  q.imgtype = 'animated' if typeof animated is 'boolean' and animated is true
-                  q.imgtype = 'face' if typeof faces is 'boolean' and faces is true
-                  msg.http('http://ajax.googleapis.com/ajax/services/search/images')
-                    .query(q)
-                    .get() (err, res, body) ->
-                      images = JSON.parse(body)
-                      images = images.responseData?.results
-                      if images?.length > 0
-                        image  = msg.random images
-                        cb "#{image.unescapedUrl}#.png"
-             */
-
             var client = new HttpClient();
-            var response = client.GetAsync(string.Format("http://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&safe=active&q={0}", "cheese")).Result;
+            var response = client.GetAsync(imageUri).Result;
             var body = response.Content.ReadAsStringAsync().Result;
             
             dynamic json = JObject.Parse(body);
-            msg.Send(json.responseData.results[0].unescapedUrl.Value);
+            var randomImageId = new Random().Next(0, json.responseData.results.ToObject<List<dynamic>>().Count);
+            var image = json.responseData.results[randomImageId];
+
+            return image.unescapedUrl.Value.ToString();
         }
     }
 }
